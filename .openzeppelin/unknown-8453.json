@@ -1,0 +1,424 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0xb42653b3Bac003Aa649C792832b386A3e02c493a",
+    "txHash": "0x3dfbb10e985a8dc263a243ec9783e464413a0e857d976667f953c767cd77d2fc"
+  },
+  "proxies": [
+    {
+      "address": "0x7AA64eB76100DD214716154DbB105c4d626EA159",
+      "txHash": "0x687b2d1c2d8e9cec650cbab7adbf35c6b09ff2829f2b94e451bb5907c2e8dbca",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "bfb2131e2f99fe06dd06a758f88dae2c76df12c45c52e61b2d738e6e2abb08f0": {
+      "address": "0x04874d4087E3f611aC555d4Bc1F5BED7bd8B45a0",
+      "txHash": "0xb435b96899cadbedd46db43623aa1eb7b053224886fa3489b299ef0cee130f6f",
+      "layout": {
+        "solcVersion": "0.8.17",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "muonAppId",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256",
+            "contract": "MuonClientBase",
+            "src": "contracts/MuonClientBase.sol:21"
+          },
+          {
+            "label": "muonPublicKey",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_struct(PublicKey)3431_storage",
+            "contract": "MuonClientBase",
+            "src": "contracts/MuonClientBase.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "54",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC165Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol:41"
+          },
+          {
+            "label": "_roles",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_mapping(t_bytes32,t_struct(RoleData)34_storage)",
+            "contract": "AccessControlUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:61"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "AccessControlUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:259"
+          },
+          {
+            "label": "PROJECT_ID",
+            "offset": 0,
+            "slot": "154",
+            "type": "t_bytes32",
+            "contract": "DibsRewarder",
+            "src": "contracts/BasedRewarder.sol:20"
+          },
+          {
+            "label": "based",
+            "offset": 0,
+            "slot": "155",
+            "type": "t_address",
+            "contract": "DibsRewarder",
+            "src": "contracts/BasedRewarder.sol:21"
+          },
+          {
+            "label": "validMuonGateway",
+            "offset": 0,
+            "slot": "156",
+            "type": "t_address",
+            "contract": "DibsRewarder",
+            "src": "contracts/BasedRewarder.sol:22"
+          },
+          {
+            "label": "startTimestamp",
+            "offset": 0,
+            "slot": "157",
+            "type": "t_uint256",
+            "contract": "DibsRewarder",
+            "src": "contracts/BasedRewarder.sol:23"
+          },
+          {
+            "label": "claimed",
+            "offset": 0,
+            "slot": "158",
+            "type": "t_mapping(t_address,t_mapping(t_uint256,t_uint256))",
+            "contract": "DibsRewarder",
+            "src": "contracts/BasedRewarder.sol:25"
+          },
+          {
+            "label": "totalReward",
+            "offset": 0,
+            "slot": "159",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "contract": "DibsRewarder",
+            "src": "contracts/BasedRewarder.sol:26"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_uint256,t_uint256))": {
+            "label": "mapping(address => mapping(uint256 => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_struct(RoleData)34_storage)": {
+            "label": "mapping(bytes32 => struct AccessControlUpgradeable.RoleData)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(PublicKey)3431_storage": {
+            "label": "struct MuonClientBase.PublicKey",
+            "members": [
+              {
+                "label": "x",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "parity",
+                "type": "t_uint8",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(RoleData)34_storage": {
+            "label": "struct AccessControlUpgradeable.RoleData",
+            "members": [
+              {
+                "label": "members",
+                "type": "t_mapping(t_address,t_bool)",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "adminRole",
+                "type": "t_bytes32",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "ae32a9ad7bcc2e4b71c41d53bb963237d5c4fb1e032a5c607a1a86ab3c3af333": {
+      "address": "0x07bC567542c872b113a01355A746d9dBBa15c7f6",
+      "txHash": "0x0488ceb01601bb607292788859e0e4188eb834a895f2cfecc420978e7f8bb90c",
+      "layout": {
+        "solcVersion": "0.8.17",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "muonAppId",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256",
+            "contract": "MuonClientBase",
+            "src": "contracts/MuonClientBase.sol:21"
+          },
+          {
+            "label": "muonPublicKey",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_struct(PublicKey)3435_storage",
+            "contract": "MuonClientBase",
+            "src": "contracts/MuonClientBase.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "54",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC165Upgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol:41"
+          },
+          {
+            "label": "_roles",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_mapping(t_bytes32,t_struct(RoleData)34_storage)",
+            "contract": "AccessControlUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:61"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "AccessControlUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:259"
+          },
+          {
+            "label": "PROJECT_ID",
+            "offset": 0,
+            "slot": "154",
+            "type": "t_bytes32",
+            "contract": "DibsRewarder",
+            "src": "contracts/BasedRewarder.sol:20"
+          },
+          {
+            "label": "based",
+            "offset": 0,
+            "slot": "155",
+            "type": "t_address",
+            "contract": "DibsRewarder",
+            "src": "contracts/BasedRewarder.sol:21"
+          },
+          {
+            "label": "validMuonGateway",
+            "offset": 0,
+            "slot": "156",
+            "type": "t_address",
+            "contract": "DibsRewarder",
+            "src": "contracts/BasedRewarder.sol:22"
+          },
+          {
+            "label": "startTimestamp",
+            "offset": 0,
+            "slot": "157",
+            "type": "t_uint256",
+            "contract": "DibsRewarder",
+            "src": "contracts/BasedRewarder.sol:23"
+          },
+          {
+            "label": "claimed",
+            "offset": 0,
+            "slot": "158",
+            "type": "t_mapping(t_address,t_mapping(t_uint256,t_uint256))",
+            "contract": "DibsRewarder",
+            "src": "contracts/BasedRewarder.sol:25"
+          },
+          {
+            "label": "totalReward",
+            "offset": 0,
+            "slot": "159",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "contract": "DibsRewarder",
+            "src": "contracts/BasedRewarder.sol:26"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_uint256,t_uint256))": {
+            "label": "mapping(address => mapping(uint256 => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_struct(RoleData)34_storage)": {
+            "label": "mapping(bytes32 => struct AccessControlUpgradeable.RoleData)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(PublicKey)3435_storage": {
+            "label": "struct MuonClientBase.PublicKey",
+            "members": [
+              {
+                "label": "x",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "parity",
+                "type": "t_uint8",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(RoleData)34_storage": {
+            "label": "struct AccessControlUpgradeable.RoleData",
+            "members": [
+              {
+                "label": "members",
+                "type": "t_mapping(t_address,t_bool)",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "adminRole",
+                "type": "t_bytes32",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    }
+  }
+}
