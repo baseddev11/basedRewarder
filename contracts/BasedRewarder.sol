@@ -11,6 +11,10 @@ import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol"
 // Importing necessary interfaces and dependencies
 import "./MuonClient.sol";
 
+interface IBased {
+    function startTimestamp() external view returns (uint256);
+}
+
 contract DibsRewarder is MuonClient, AccessControlUpgradeable {
     using ECDSA for bytes32;
     using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -19,7 +23,6 @@ contract DibsRewarder is MuonClient, AccessControlUpgradeable {
     bytes32 public PROJECT_ID; // DiBs Unique Project ID
     address public based; // Reward token
     address public validMuonGateway; // Valid Muon gateway
-    uint256 public startTimestamp; // Start timestamp of the reward program
 
     mapping(address => mapping(uint256 => uint256)) public claimed; // Mapping of user's claimed balance per day. claimed[user][day] = amount
     mapping(uint256 => uint256) public totalReward; // Mapping of total reward per day totalReward[day] = amount
@@ -28,7 +31,6 @@ contract DibsRewarder is MuonClient, AccessControlUpgradeable {
     event Reward(uint256 day, uint256 amount);
     event Claim(address indexed user, uint256 day, uint256 amount);
     event SetBased(address indexed based);
-    event SetStartTimestamp(uint256 startTimestamp);
 
     // Errors
     error InvalidSignature();
@@ -43,14 +45,12 @@ contract DibsRewarder is MuonClient, AccessControlUpgradeable {
     function initialize(
         address _based,
         address _admin,
-        uint256 _startTimestamp,
         address _validMuonGateway,
         uint256 _muonAppId,
         PublicKey memory _muonPublicKey
     ) public initializer {
         __MuonClient_init(_muonAppId, _muonPublicKey);
-        __AccessControl_init();
-        __DiBsRewarder_init(_based, _admin, _startTimestamp, _validMuonGateway);
+        __DiBsRewarder_init(_based, _admin, _validMuonGateway);
     }
 
     /// @notice Initialize the DiBsRewarder contract
@@ -60,11 +60,9 @@ contract DibsRewarder is MuonClient, AccessControlUpgradeable {
     function __DiBsRewarder_init(
         address _based,
         address _admin,
-        uint256 _startTimestamp,
         address _validMuonGateway
-    ) public onlyInitializing {
+    ) private onlyInitializing {
         based = _based;
-        startTimestamp = _startTimestamp;
         validMuonGateway = _validMuonGateway;
 
         PROJECT_ID = keccak256(
@@ -105,7 +103,7 @@ contract DibsRewarder is MuonClient, AccessControlUpgradeable {
         SchnorrSign calldata _sign,
         bytes calldata _gatewaySignature
     ) external {
-        if (_day >= (block.timestamp - startTimestamp) / 1 days)
+        if (_day >= (block.timestamp - IBased(based).startTimestamp()) / 1 days)
             revert DayNotFinished();
 
         verifyTSSAndGW(
@@ -137,15 +135,6 @@ contract DibsRewarder is MuonClient, AccessControlUpgradeable {
     function setBased(address _based) external onlyRole(DEFAULT_ADMIN_ROLE) {
         based = _based;
         emit SetBased(_based);
-    }
-
-    /// @notice set start timestamp
-    /// @param _startTimestamp start timestamp
-    function setStartTimestamp(
-        uint256 _startTimestamp
-    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        startTimestamp = _startTimestamp;
-        emit SetStartTimestamp(_startTimestamp);
     }
 
     /// @notice Verifies a Muon signature of the given data

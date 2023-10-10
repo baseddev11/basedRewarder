@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 import "./utils/SchnorrSECP256K1Verifier.sol";
-import "hardhat/console.sol";
 
 contract MuonClientBase is SchnorrSECP256K1Verifier {
     struct SchnorrSign {
@@ -20,6 +19,8 @@ contract MuonClientBase is SchnorrSECP256K1Verifier {
 
     uint256 public muonAppId;
     PublicKey public muonPublicKey;
+
+    uint256[48] private __gap;
 
     function muonVerify(
         bytes calldata reqId,
