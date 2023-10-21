@@ -12,14 +12,10 @@ async function deploy() {
     "0x4d8bf64cdc8651641833910995bfe0aed9b61037721f3d2305d1f87e8f3ad815",
     "0",
   ];
-  const args = [
-    ethers.constants.AddressZero,
-    admin.address,
-    BigNumber.from("100000000000000000"),
-    validGateway,
-    appId,
-    publicKey,
-  ];
+
+  const basedToken = "0xBa5E6fa2f33f3955f0cef50c63dCC84861eAb663";
+
+  const args = [basedToken, admin.address, validGateway, appId, publicKey];
 
   const rewarder = await upgrades.deployProxy(Factory, args);
   await rewarder.deployed();
