@@ -103,7 +103,7 @@ contract DibsRewarder is MuonClient, AccessControlUpgradeable {
         SchnorrSign calldata _sign,
         bytes calldata _gatewaySignature
     ) external {
-        if (_day >= (block.timestamp - IBased(based).startTimestamp()) / 1 days)
+        if (_day >= (_sigTimestamp - IBased(based).startTimestamp()) / 1 days)
             revert DayNotFinished();
 
         verifyTSSAndGW(
