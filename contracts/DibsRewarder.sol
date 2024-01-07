@@ -3,23 +3,19 @@
 pragma solidity ^0.8.13;
 
 // OpenZeppelin imports for cryptographic and ERC20 token functionality
-import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
-
-// Importing necessary interfaces and dependencies
-import "./MuonClient.sol";
+import "./interfaces/IMuonClientBase.sol";
 
 contract Rewarder is AccessControlUpgradeable {
-    using ECDSA for bytes32;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     // Constants and state variables
     bytes32 public PROJECT_ID; // DiBs Unique Project ID
     address public rewardToken; // Reward token
-    address public muonClient; // Muon client contract
     uint256 public startTimestamp; // Start timestamp of the reward program
+    IMuonClientBase public muonClient; // Muon client contract
 
     mapping(address => mapping(uint256 => uint256)) public claimed; // Mapping of user's claimed balance per day. claimed[user][day] = amount
     mapping(uint256 => uint256) public totalReward; // Mapping of total reward per day totalReward[day] = amount
@@ -35,29 +31,14 @@ contract Rewarder is AccessControlUpgradeable {
 
     /// @notice Initialize the contract
     /// @param _rewardToken address of the reward token
-    /// @param _validMuonGateway address of the valid Muon gateway
     /// @param _admin address of the admin, can set reward token
-    /// @param _muonAppId muon app id
-    /// @param _muonPublicKey muon public key
+    /// @param _muonClient of the valid Muon gateway
     function initialize(
         address _rewardToken,
         address _admin,
-        address _validMuonGateway,
-        uint256 _muonAppId,
-        MuonClient.PublicKey memory _muonPublicKey
+        address _muonClient
     ) public initializer {
-        muonClient = address(new MuonClient());
-        muonClient.initialize(_validMuonGateway, _muonAppId, _muonPublicKey);
-        __DiBsRewarder_init(_rewardToken, _admin);
-    }
-
-    /// @notice Initialize the DiBsRewarder contract
-    /// @param _rewardToken address of the reward token
-    /// @param _admin address of the admin, can set reward token
-    function __DiBsRewarder_init(
-        address _rewardToken,
-        address _admin
-    ) private onlyInitializing {
+        muonClient = IMuonClientBase(_muonClient);
         rewardToken = _rewardToken;
 
         PROJECT_ID = keccak256(
@@ -95,7 +76,7 @@ contract Rewarder is AccessControlUpgradeable {
         uint256 _totalPoints,
         uint256 _sigTimestamp,
         bytes calldata _reqId,
-        MuonClient.SchnorrSign calldata _sign,
+        IMuonClientBase.SchnorrSign calldata _sign,
         bytes calldata _gatewaySignature
     ) external {
         if (_day >= (_sigTimestamp - startTimestamp) / 1 days)
