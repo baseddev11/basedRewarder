@@ -2,7 +2,6 @@
 
 pragma solidity ^0.8.13;
 
-// OpenZeppelin imports for cryptographic and ERC20 token functionality
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
@@ -24,6 +23,7 @@ contract Rewarder is AccessControlUpgradeable {
     event Reward(uint256 day, uint256 amount);
     event Claim(address indexed user, uint256 day, uint256 amount);
     event SetrewardToken(address indexed rewardToken);
+    event SetMuonClient(address newAddress, address oldAddress);
 
     // Errors
     error InvalidSignature();
@@ -118,5 +118,14 @@ contract Rewarder is AccessControlUpgradeable {
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         rewardToken = _rewardToken;
         emit SetrewardToken(_rewardToken);
+    }
+
+    /// @notice Set the muon client
+    /// @param _muonClient address of the muon client
+    function setMuonClient(
+        address _muonClient
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        emit SetMuonClient(_muonClient, address(muonClient));
+        muonClient = IMuonClientBase(_muonClient);
     }
 }

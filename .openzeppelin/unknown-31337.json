@@ -2,7 +2,7 @@
   "manifestVersion": "3.2",
   "admin": {
     "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-    "txHash": "0x2f1b333be9f421bc5d0817d729178b3800d39f7fe9cf298543078888a426ca40"
+    "txHash": "0x4d7d4cfa0b25e4b7f05a1f4cdd894d352bd4fca4c467a8495729a4877f5d515b"
   },
   "proxies": [
     {
@@ -1297,47 +1297,47 @@
     },
     {
       "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-      "txHash": "0xd589b663251c89067f7dcfe54bbd7e32558a5aa8adaaf2613244181ab8a8d710",
+      "txHash": "0x77e5ce044134c41cf4e8bb228165260904e4daafb7c1553c5debf044fba5868d",
       "kind": "transparent"
     },
     {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0x278f9b5aa79b9e32d241b80822242c1cefaca50da137c05e011de64777c3aecb",
+      "txHash": "0x2d401811746276f1ca0a9d112a8331cbccea2a89d7a039b1965c9a5ea9a419a7",
       "kind": "transparent"
     },
     {
       "address": "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82",
-      "txHash": "0xd8a13e0b8bfa31d6d0649ecef4089ccc171c19a225442d04d5012eca2c2050c2",
+      "txHash": "0x43ed064af9d910125c7ec907ac75739370eccfcdf41b514c372aaeb64628803f",
       "kind": "transparent"
     },
     {
       "address": "0x3Aa5ebB10DC797CAC828524e59A333d0A371443c",
-      "txHash": "0xfc4cd859a2c38013cebb77f7e3f0cd2e768c7dbf526c68a74b98b5f542a2a450",
+      "txHash": "0x84e9453468415a5bf30c48d02baa934b73510920ebae01fee5a9ebcb02e7be7c",
       "kind": "transparent"
     },
     {
       "address": "0x7a2088a1bFc9d81c55368AE168C2C02570cB814F",
-      "txHash": "0xbc13548df70443bbe01428d78c00c0886f4d0ab270a7692b05e9ab76633e9df7",
+      "txHash": "0x544b74806bf62436f97ce7571bfefddde9d0094194551c03aaed79da840cc043",
       "kind": "transparent"
     },
     {
       "address": "0x9E545E3C0baAB3E08CdfD552C960A1050f373042",
-      "txHash": "0x8b23b90a644613629f9bdb14c7a86cabc4475f1d3121d14264898b8d810dd7d2",
+      "txHash": "0xcaa2ea37000d5601007bb1a1dffbd303819ecea904ea8712eb82b2d9f7a2812d",
       "kind": "transparent"
     },
     {
       "address": "0x70e0bA845a1A0F2DA3359C97E0285013525FFC49",
-      "txHash": "0x52ab5df3fc4fdf2e7234f205d8abcae74f3093cd707a28d8994a96422a8137f0",
+      "txHash": "0x85f66784a6d3c0a1bebb15ebafad3d6faac3f6bf09b14b963542828400211a00",
       "kind": "transparent"
     },
     {
       "address": "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570",
-      "txHash": "0xf2c812809b7b1d8469e85a0e5880083d51c14159313ee3e0efa4483165a6ae70",
+      "txHash": "0xd2b67e6f11727602d07921d71507a0e1c4328e4b3d455391d79cb801d162e31e",
       "kind": "transparent"
     },
     {
       "address": "0x7969c5eD335650692Bc04293B07F5BF2e7A673C0",
-      "txHash": "0x8e5e03b55f58b398045a3cf0841c504f0d2a309cc59ae23c9af671b3efc50f3e",
+      "txHash": "0xaa53d8ee39a143f8e035ec12b6cb953b7a6806c2b1d64d6dcc46187b5d22c7c8",
       "kind": "transparent"
     }
   ],
@@ -3484,9 +3484,9 @@
         }
       }
     },
-    "535e5b0b3114a788f4c1770be41b177a41e2b357de261220847514475cd7cdc2": {
+    "0cf06e4e5b3856ecd6d2aede9d538b18f4314d3289f5a15c9fc26b1a75287c04": {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-      "txHash": "0xb601243e7c74202055988fc16c787c075ac0e236bfd84d52cc8f90f38f4838ec",
+      "txHash": "0x29e4bd8cd9344ab12f04d42606f8847d9966c967b9039685809e9cafefe12fc8",
       "layout": {
         "solcVersion": "0.8.17",
         "storage": [
@@ -3545,7 +3545,7 @@
             "slot": "151",
             "type": "t_bytes32",
             "contract": "Rewarder",
-            "src": "contracts/Rewarder.sol:15"
+            "src": "contracts/Rewarder.sol:14"
           },
           {
             "label": "rewardToken",
@@ -3553,7 +3553,7 @@
             "slot": "152",
             "type": "t_address",
             "contract": "Rewarder",
-            "src": "contracts/Rewarder.sol:16"
+            "src": "contracts/Rewarder.sol:15"
           },
           {
             "label": "startTimestamp",
@@ -3561,15 +3561,15 @@
             "slot": "153",
             "type": "t_uint256",
             "contract": "Rewarder",
-            "src": "contracts/Rewarder.sol:17"
+            "src": "contracts/Rewarder.sol:16"
           },
           {
             "label": "muonClient",
             "offset": 0,
             "slot": "154",
-            "type": "t_contract(IMuonClientBase)2687",
+            "type": "t_contract(IMuonClientBase)2717",
             "contract": "Rewarder",
-            "src": "contracts/Rewarder.sol:18"
+            "src": "contracts/Rewarder.sol:17"
           },
           {
             "label": "claimed",
@@ -3577,7 +3577,7 @@
             "slot": "155",
             "type": "t_mapping(t_address,t_mapping(t_uint256,t_uint256))",
             "contract": "Rewarder",
-            "src": "contracts/Rewarder.sol:20"
+            "src": "contracts/Rewarder.sol:19"
           },
           {
             "label": "totalReward",
@@ -3585,7 +3585,7 @@
             "slot": "156",
             "type": "t_mapping(t_uint256,t_uint256)",
             "contract": "Rewarder",
-            "src": "contracts/Rewarder.sol:21"
+            "src": "contracts/Rewarder.sol:20"
           }
         ],
         "types": {
@@ -3609,7 +3609,7 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_contract(IMuonClientBase)2687": {
+          "t_contract(IMuonClientBase)2717": {
             "label": "contract IMuonClientBase",
             "numberOfBytes": "20"
           },
