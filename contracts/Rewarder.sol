@@ -36,10 +36,12 @@ contract Rewarder is AccessControlUpgradeable {
     function initialize(
         address _rewardToken,
         address _admin,
-        address _muonClient
+        address _muonClient,
+        uint256 _startTimestamp
     ) public initializer {
         muonClient = IMuonClientBase(_muonClient);
         rewardToken = _rewardToken;
+        startTimestamp = _startTimestamp;
 
         PROJECT_ID = keccak256(
             abi.encodePacked(uint256(block.chainid), address(this))
