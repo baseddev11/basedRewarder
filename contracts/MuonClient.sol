@@ -1,19 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-import "./interfaces/IMuonClientBase.sol";
+import "./interfaces/IMuonClient.sol";
 import "./utils/SchnorrSECP256K1Verifier.sol";
 
-contract MuonClientBase is IMuonClientBase, SchnorrSECP256K1Verifier {
+contract MuonClient is IMuonClient, SchnorrSECP256K1Verifier {
     using ECDSA for bytes32;
 
     address public validGateway;
     uint256 public appId;
     PublicKey public pubKey;
-
-    uint256[47] private __gap;
 
     constructor(
         address _validGateway,

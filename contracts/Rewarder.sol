@@ -5,7 +5,7 @@ pragma solidity ^0.8.13;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
-import "./interfaces/IMuonClientBase.sol";
+import "./interfaces/IMuonClient.sol";
 
 contract Rewarder is AccessControlUpgradeable {
     using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -14,7 +14,7 @@ contract Rewarder is AccessControlUpgradeable {
     bytes32 public PROJECT_ID; // DiBs Unique Project ID
     address public rewardToken; // Reward token
     uint256 public startTimestamp; // Start timestamp of the reward program
-    IMuonClientBase public muonClient; // Muon client contract
+    IMuonClient public muonClient; // Muon client contract
 
     mapping(address => mapping(uint256 => uint256)) public claimed; // Mapping of user's claimed balance per day. claimed[user][day] = amount
     mapping(uint256 => uint256) public totalReward; // Mapping of total reward per day totalReward[day] = amount
@@ -39,7 +39,7 @@ contract Rewarder is AccessControlUpgradeable {
         address _muonClient,
         uint256 _startTimestamp
     ) public initializer {
-        muonClient = IMuonClientBase(_muonClient);
+        muonClient = IMuonClient(_muonClient);
         rewardToken = _rewardToken;
         startTimestamp = _startTimestamp;
 
@@ -78,7 +78,7 @@ contract Rewarder is AccessControlUpgradeable {
         uint256 _totalPoints,
         uint256 _sigTimestamp,
         bytes calldata _reqId,
-        IMuonClientBase.SchnorrSign calldata _sign,
+        IMuonClient.SchnorrSign calldata _sign,
         bytes calldata _gatewaySignature
     ) external {
         if (_day >= (_sigTimestamp - startTimestamp) / 1 days)
@@ -126,6 +126,6 @@ contract Rewarder is AccessControlUpgradeable {
         address _muonClient
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         emit SetMuonClient(_muonClient, address(muonClient));
-        muonClient = IMuonClientBase(_muonClient);
+        muonClient = IMuonClient(_muonClient);
     }
 }

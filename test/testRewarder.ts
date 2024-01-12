@@ -8,7 +8,7 @@ import { getCurrentTimeStamp } from "./timeUtils";
 import {
   Rewarder,
   IERC20__factory,
-  IMuonClientBase__factory,
+  IMuonClient__factory,
 } from "../typechain-types";
 
 describe("testRewarder", () => {
@@ -22,8 +22,9 @@ describe("testRewarder", () => {
 
   beforeEach(async () => {
     [admin, user1, user2, user3] = await ethers.getSigners();
+
     rewardToken = await deployMockContract(admin, IERC20__factory.abi);
-    muonClient = await deployMockContract(admin, IMuonClientBase__factory.abi);
+    muonClient = await deployMockContract(admin, IMuonClient__factory.abi);
     const startTimestamp = await getCurrentTimeStamp();
     const Factory = await ethers.getContractFactory("Rewarder");
     const args = [

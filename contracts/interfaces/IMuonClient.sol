@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-interface IMuonClientBase {
+interface IMuonClient {
     struct SchnorrSign {
         uint256 signature;
         address owner;
