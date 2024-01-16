@@ -24,6 +24,10 @@ contract RFL is
     // owner => token id that is in use - can only have one active at a time
     mapping(address => uint256) public tokenInUse; // tokenId 0 is never minted
 
+    event CollateralLocked(uint256 indexed tokenId, uint256 amount);
+    event CollateralUnlocked(uint256 indexed tokenId, uint256 amount);
+    event SetInUse(uint256 indexed tokenId, address indexed owner);
+
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
@@ -46,17 +50,27 @@ contract RFL is
         activationCollateralThreshold = _activationCollateralThreshold;
     }
 
+    // =========================== PUBLIC VIEWS ===========================
+
+    /// @notice returns a deterministic tokenId based on code - token id may not exist yet
+    /// @param code - referral code
+    /// @return tokenId
     function getTokenId(string memory code) public pure returns (uint256) {
         return uint256(keccak256(abi.encodePacked(code)));
     }
 
+    /// @notice token is active if it's OG or has enough collateral locked
+    /// @param tokenId - token id
+    /// @return true if active
     function isActiveReferrer(uint256 tokenId) public view returns (bool) {
         return
             lockedTokens[tokenId] >= activationCollateralThreshold ||
             isOg[tokenId];
     }
 
-    /// @notice these can be activated without locking token
+    /// @notice mint a token if it doesn't exist yet, does not require collateral to activate
+    /// @param to - address to mint to
+    /// @param code - referral code
     function ogMint(
         address to,
         string memory code
@@ -66,17 +80,53 @@ contract RFL is
         _safeMint(to, tokenId);
     }
 
+    /// @notice mint a token to caller if it doesn't exist yet, requires collateral to activate
+    /// @param code - referral code
     function safeMint(string memory code) external {
         _safeMint(msg.sender, getTokenId(code));
     }
 
+    /// @notice set token in use for the sender if the token is owned by the sender
+    /// @param tokenId - token id
     function setTokenInUse(uint256 tokenId) external onlyOwner(tokenId) {
         tokenInUse[msg.sender] = tokenId;
+        emit SetInUse(tokenId, msg.sender);
     }
 
-    modifier onlyOwner(uint256 tokenId) {
-        require(ownerOf(tokenId) == msg.sender, "Not owner");
-        _;
+    // =========================== INTERNAL OVERRIDES ===========================
+
+    /// @notice unsets token in use for the sender if the token is in use
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 firstTokenId,
+        uint256 batchSize
+    ) internal override {
+        for (uint256 i = 0; i < batchSize; i++) {
+            uint256 tokenId = firstTokenId + i;
+            if (from != address(0)) {
+                if (tokenInUse[from] == tokenId) {
+                    tokenInUse[from] = 0;
+                }
+            }
+        }
+    }
+
+    /// @dev sets token in use for the receiver if has no active token
+    function _afterTokenTransfer(
+        address from,
+        address to,
+        uint256 firstTokenId,
+        uint256 batchSize
+    ) internal override {
+        for (uint256 i = 0; i < batchSize; i++) {
+            uint256 tokenId = firstTokenId + i;
+            if (to != address(0)) {
+                if (tokenInUse[to] == 0) {
+                    tokenInUse[to] = tokenId;
+                }
+            }
+        }
     }
 
     // The following functions are overrides required by Solidity.
@@ -90,5 +140,11 @@ contract RFL is
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
+    }
+
+    /// @dev only owner of the token can call this
+    modifier onlyOwner(uint256 tokenId) {
+        require(ownerOf(tokenId) == msg.sender, "Not owner");
+        _;
     }
 }

@@ -85,14 +85,13 @@ describe("ReferralNFT", () => {
     expect(await rfl.isActiveReferrer(getTokenIdFromCode("user1Code"))).to.be
       .false;
   });
-  it("owner should not have any in use nfts after mint", async () => {
+  it("owner should have one nft in use nfts after mint", async () => {
     await rfl.connect(minter).ogMint(og1.address, "og1Code");
-    expect(await rfl.tokenInUse(og1.address)).eq(0);
+    expect(await rfl.tokenInUse(og1.address)).eq(getTokenIdFromCode("og1Code"));
   });
 
   it("should allow owner to set in use to true for referral NFT", async () => {
     await rfl.connect(minter).ogMint(og1.address, "og1Code");
-    await rfl.connect(og1).setTokenInUse(getTokenIdFromCode("og1Code"));
     expect(await rfl.tokenInUse(og1.address)).eq(getTokenIdFromCode("og1Code"));
   });
 
@@ -101,5 +100,16 @@ describe("ReferralNFT", () => {
     await expect(
       rfl.connect(user1).setTokenInUse(getTokenIdFromCode("og1Code"))
     ).to.be.revertedWith("Not owner");
+  });
+
+  it("should set in use to 0 if referral NFT is transferred", async () => {
+    await rfl.connect(minter).ogMint(og1.address, "og1Code");
+    await rfl
+      .connect(og1)
+      .transferFrom(og1.address, user1.address, getTokenIdFromCode("og1Code"));
+    expect(await rfl.tokenInUse(og1.address)).eq(0);
+    expect(await rfl.tokenInUse(user1.address)).eq(
+      getTokenIdFromCode("og1Code")
+    );
   });
 });
