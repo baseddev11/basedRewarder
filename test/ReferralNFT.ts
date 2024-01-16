@@ -79,7 +79,7 @@ describe("ReferralNFT", () => {
 
   it("should set status to inactive is normal referral NFT is minted", async () => {
     await rfl.connect(minter).ogMint(og1.address, "og1Code");
-    await rfl.connect(user1).safeMint("user1Code");
+    await rfl.connect(user1)["safeMint(string)"]("user1Code");
     expect(await rfl.isActiveReferrer(getTokenIdFromCode("og1Code"))).to.be
       .true;
     expect(await rfl.isActiveReferrer(getTokenIdFromCode("user1Code"))).to.be
@@ -111,5 +111,18 @@ describe("ReferralNFT", () => {
     expect(await rfl.tokenInUse(user1.address)).eq(
       getTokenIdFromCode("og1Code")
     );
+  });
+
+  it("should not be able to mint with inactive referrer", async () => {
+    await rfl.connect(user1)["safeMint(string)"]("user1code");
+
+    await expect(
+      rfl
+        .connect(user2)
+        ["safeMint(string,uint256)"](
+          "user2Code",
+          getTokenIdFromCode("user1Code")
+        )
+    ).to.be.revertedWithCustomError(rfl, "InactiveReferrer");
   });
 });

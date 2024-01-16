@@ -28,6 +28,8 @@ contract RFL is
     event CollateralUnlocked(uint256 indexed tokenId, uint256 amount);
     event SetInUse(uint256 indexed tokenId, address indexed owner);
 
+    error InactiveReferrer();
+
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
@@ -85,6 +87,14 @@ contract RFL is
     function safeMint(string memory code) external {
         _safeMint(msg.sender, getTokenId(code));
     }
+
+    /// @notice mint a token with a referrer if it doesn't exist yet, requires collateral to activate
+    /// @param code - referral code
+    /// @param referrerTokenId - referrer token id - must be active
+    function safeMint(
+        string memory code,
+        uint256 referrerTokenId
+    ) external onlyActiveReferrer(referrerTokenId) {}
 
     /// @notice set token in use for the sender if the token is owned by the sender
     /// @param tokenId - token id
@@ -145,6 +155,15 @@ contract RFL is
     /// @dev only owner of the token can call this
     modifier onlyOwner(uint256 tokenId) {
         require(ownerOf(tokenId) == msg.sender, "Not owner");
+        _;
+    }
+
+    modifier onlyActiveReferrer(uint256 tokenId) {
+        if (isActiveReferrer(tokenId)) {
+            _;
+        } else {
+            revert InactiveReferrer();
+        }
         _;
     }
 }
