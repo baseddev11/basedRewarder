@@ -23,11 +23,14 @@ contract RFL is
 
     // tokenId => locked collateral
     mapping(uint256 => uint256) public lockedTokens;
+    // tokenId => code string
+    mapping(uint256 => string) public codeName;
     // tokenId => is original
     mapping(uint256 => bool) public isOg;
     // owner => token id that is in use - can only have one active at a time
     mapping(address => uint256) public tokenInUse; // tokenId 0 is never minted
-    mapping(uint256 => uint256) public referrer; // tokenId => tokenId
+    // tokenId => referrer token id
+    mapping(uint256 => uint256) public referrer;
 
     event CollateralLocked(
         uint256 indexed tokenId,
@@ -93,6 +96,8 @@ contract RFL is
     /// @notice mint a token to caller if it doesn't exist yet, requires collateral to activate
     /// @param code - referral code
     function safeMint(string memory code) external {
+        uint256 tokenId = getTokenId(code);
+        codeName[tokenId] = code;
         _safeMint(msg.sender, getTokenId(code));
     }
 
@@ -108,6 +113,7 @@ contract RFL is
         }
         uint256 tokenId = getTokenId(code);
         referrer[tokenId] = referrerTokenId;
+        codeName[tokenId] = code;
         _safeMint(msg.sender, tokenId);
 
         emit SetReferrer(tokenId, referrerTokenId);
