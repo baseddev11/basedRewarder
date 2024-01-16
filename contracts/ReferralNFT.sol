@@ -23,6 +23,7 @@ contract RFL is
     mapping(uint256 => bool) public isOg;
     // owner => token id that is in use - can only have one active at a time
     mapping(address => uint256) public tokenInUse; // tokenId 0 is never minted
+    mapping(uint256 => uint256) public referrer; // tokenId => tokenId
 
     event CollateralLocked(uint256 indexed tokenId, uint256 amount);
     event CollateralUnlocked(uint256 indexed tokenId, uint256 amount);
@@ -58,7 +59,9 @@ contract RFL is
     /// @param code - referral code
     /// @return tokenId
     function getTokenId(string memory code) public pure returns (uint256) {
-        return uint256(keccak256(abi.encodePacked(code)));
+        uint tokenId = uint256(keccak256(abi.encodePacked(code)));
+
+        return tokenId;
     }
 
     /// @notice token is active if it's OG or has enough collateral locked
@@ -91,10 +94,17 @@ contract RFL is
     /// @notice mint a token with a referrer if it doesn't exist yet, requires collateral to activate
     /// @param code - referral code
     /// @param referrerTokenId - referrer token id - must be active
-    function safeMint(
+    function safeMintWithReferrer(
         string memory code,
         uint256 referrerTokenId
-    ) external onlyActiveReferrer(referrerTokenId) {}
+    ) external {
+        if (!isActiveReferrer(referrerTokenId)) {
+            revert InactiveReferrer();
+        }
+        uint256 tokenId = getTokenId(code);
+        referrer[tokenId] = referrerTokenId;
+        _safeMint(msg.sender, tokenId);
+    }
 
     /// @notice set token in use for the sender if the token is owned by the sender
     /// @param tokenId - token id
@@ -155,15 +165,6 @@ contract RFL is
     /// @dev only owner of the token can call this
     modifier onlyOwner(uint256 tokenId) {
         require(ownerOf(tokenId) == msg.sender, "Not owner");
-        _;
-    }
-
-    modifier onlyActiveReferrer(uint256 tokenId) {
-        if (isActiveReferrer(tokenId)) {
-            _;
-        } else {
-            revert InactiveReferrer();
-        }
         _;
     }
 }
