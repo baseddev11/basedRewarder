@@ -5,6 +5,8 @@ import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 contract RFL is
     Initializable,
@@ -12,6 +14,8 @@ contract RFL is
     ERC721BurnableUpgradeable,
     AccessControlUpgradeable
 {
+    using SafeERC20Upgradeable for IERC20Upgradeable;
+
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
     uint256 public activationCollateralThreshold; // collateral required to activate an NFT to be able to participate in the referral program
@@ -25,11 +29,22 @@ contract RFL is
     mapping(address => uint256) public tokenInUse; // tokenId 0 is never minted
     mapping(uint256 => uint256) public referrer; // tokenId => tokenId
 
-    event CollateralLocked(uint256 indexed tokenId, uint256 amount);
-    event CollateralUnlocked(uint256 indexed tokenId, uint256 amount);
+    event CollateralLocked(
+        uint256 indexed tokenId,
+        uint256 increasedAmount,
+        uint256 totalLocked
+    );
+    event CollateralUnlocked(
+        uint256 indexed tokenId,
+        uint256 increasedAmount,
+        uint256 totalLocked
+    );
     event SetInUse(uint256 indexed tokenId, address indexed owner);
+    event SetReferrer(uint256 indexed tokenId, uint256 indexed referrerTokenId);
 
     error InactiveReferrer();
+    error NotOwner();
+    error ReferrerAlreadySet();
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -73,17 +88,7 @@ contract RFL is
             isOg[tokenId];
     }
 
-    /// @notice mint a token if it doesn't exist yet, does not require collateral to activate
-    /// @param to - address to mint to
-    /// @param code - referral code
-    function ogMint(
-        address to,
-        string memory code
-    ) public onlyRole(MINTER_ROLE) {
-        uint256 tokenId = getTokenId(code);
-        isOg[tokenId] = true;
-        _safeMint(to, tokenId);
-    }
+    // =========================== PUBLIC MUTATIVE FUNCTIONS ===========================
 
     /// @notice mint a token to caller if it doesn't exist yet, requires collateral to activate
     /// @param code - referral code
@@ -104,6 +109,8 @@ contract RFL is
         uint256 tokenId = getTokenId(code);
         referrer[tokenId] = referrerTokenId;
         _safeMint(msg.sender, tokenId);
+
+        emit SetReferrer(tokenId, referrerTokenId);
     }
 
     /// @notice set token in use for the sender if the token is owned by the sender
@@ -111,6 +118,69 @@ contract RFL is
     function setTokenInUse(uint256 tokenId) external onlyOwner(tokenId) {
         tokenInUse[msg.sender] = tokenId;
         emit SetInUse(tokenId, msg.sender);
+    }
+
+    /// @notice increase locked collateral for a token
+    /// @param tokenId - token id
+    /// @param amount - amount to increase
+    function increaseLockedCollateral(
+        uint256 tokenId,
+        uint256 amount
+    ) external {
+        IERC20Upgradeable(collateral).safeTransferFrom(
+            msg.sender,
+            address(this),
+            amount
+        );
+        uint256 newTotalLocked = lockedTokens[tokenId] + amount;
+        lockedTokens[tokenId] = newTotalLocked;
+        emit CollateralLocked(tokenId, amount, newTotalLocked);
+    }
+
+    /// @notice decrease locked collateral for a token
+    /// @param tokenId - token id
+    /// @param amount - amount to decrease
+    function decreaseLockedCollateral(
+        uint256 tokenId,
+        uint256 amount
+    ) external onlyOwner(tokenId) {
+        uint256 newTotalLocked = lockedTokens[tokenId] - amount;
+        lockedTokens[tokenId] = newTotalLocked;
+        IERC20Upgradeable(collateral).safeTransfer(msg.sender, amount);
+        emit CollateralUnlocked(tokenId, amount, newTotalLocked);
+    }
+
+    /// @notice set a referrer for a token - referrer must be active
+    /// @param tokenId - token id
+    /// @param referrerTokenId - referrer token id
+    function setReferrer(
+        uint256 tokenId,
+        uint256 referrerTokenId
+    ) external onlyOwner(tokenId) {
+        if (!isActiveReferrer(referrerTokenId)) {
+            revert InactiveReferrer();
+        }
+
+        if (referrer[tokenId] != 0) {
+            revert ReferrerAlreadySet();
+        }
+
+        referrer[tokenId] = referrerTokenId;
+        emit SetReferrer(tokenId, referrerTokenId);
+    }
+
+    // =========================== ADMIN MUTATIVE FUNCTIONS ===========================
+
+    /// @notice mint a token if it doesn't exist yet, does not require collateral to activate
+    /// @param to - address to mint to
+    /// @param code - referral code
+    function ogMint(
+        address to,
+        string memory code
+    ) public onlyRole(MINTER_ROLE) {
+        uint256 tokenId = getTokenId(code);
+        isOg[tokenId] = true;
+        _safeMint(to, tokenId);
     }
 
     // =========================== INTERNAL OVERRIDES ===========================
@@ -164,7 +234,7 @@ contract RFL is
 
     /// @dev only owner of the token can call this
     modifier onlyOwner(uint256 tokenId) {
-        require(ownerOf(tokenId) == msg.sender, "Not owner");
+        if (ownerOf(tokenId) != msg.sender) revert NotOwner();
         _;
     }
 }
