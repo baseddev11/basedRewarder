@@ -25,6 +25,8 @@ contract RFL is
     mapping(uint256 => uint256) public lockedTokens;
     // tokenId => code string
     mapping(uint256 => string) public codeName;
+    // code string => tokenId
+    mapping(string => uint256) public codeTokenId;
     // tokenId => is original
     mapping(uint256 => bool) public isOg;
     // owner => token id that is in use - can only have one active at a time
@@ -98,6 +100,7 @@ contract RFL is
     function safeMint(string memory code) external {
         uint256 tokenId = getTokenId(code);
         codeName[tokenId] = code;
+        codeTokenId[code] = tokenId;
         _safeMint(msg.sender, getTokenId(code));
     }
 
@@ -114,6 +117,7 @@ contract RFL is
         uint256 tokenId = getTokenId(code);
         referrer[tokenId] = referrerTokenId;
         codeName[tokenId] = code;
+        codeTokenId[code] = tokenId;
         _safeMint(msg.sender, tokenId);
 
         emit SetReferrer(tokenId, referrerTokenId);
