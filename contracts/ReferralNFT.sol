@@ -93,13 +93,13 @@ contract RFL is
 
     // =========================== PUBLIC MUTATIVE FUNCTIONS ===========================
 
-    /// @notice mint a token to caller if it doesn't exist yet, requires collateral to activate
+    /// @notice mint a token to caller if it doesn't exist yet; requires collateral to activate
     /// @param code - referral code
     function safeMint(string memory code) external {
         uint256 tokenId = getTokenId(code);
         codeName[tokenId] = code;
         codeTokenId[code] = tokenId;
-        _safeMint(msg.sender, getTokenId(code));
+        _safeMint(msg.sender, tokenId);
     }
 
     /// @notice mint a token with a referrer if it doesn't exist yet, requires collateral to activate
