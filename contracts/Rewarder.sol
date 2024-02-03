@@ -7,6 +7,8 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "./interfaces/IMuonClient.sol";
 
+import "./interfaces/IRFL.sol";
+
 contract Rewarder is AccessControlUpgradeable {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -14,8 +16,9 @@ contract Rewarder is AccessControlUpgradeable {
     bytes32 public PROJECT_ID; // DiBs Unique Project ID
     address public rewardToken; // Reward token
     address public muonClient; // Muon client contract
+    address public rfl; // Referral NFT contract
 
-    mapping(address => mapping(uint256 => uint256)) public claimed; // Mapping of user's claimed balance per day. claimed[user][day] = amount
+    mapping(uint256 => mapping(uint256 => uint256)) public claimed; // Mapping of nft's claimed balance per day. claimed[nftId][day] = amount
     mapping(uint256 => uint256) public totalReward; // Mapping of total reward per day totalReward[day] = amount
 
     // Events
@@ -35,10 +38,12 @@ contract Rewarder is AccessControlUpgradeable {
     function initialize(
         address _rewardToken,
         address _admin,
-        address _muonClient
+        address _muonClient,
+        address _rfl
     ) public initializer {
         muonClient = _muonClient;
         rewardToken = _rewardToken;
+        rfl = _rfl;
 
         PROJECT_ID = keccak256(
             abi.encodePacked(uint256(block.chainid), address(this))
@@ -62,8 +67,8 @@ contract Rewarder is AccessControlUpgradeable {
 
     /// @notice Claim reward for a given day - requires valid muon signature
     /// @param _day day to claim reward for
-    /// @param _userPoints user's volume for the day
-    /// @param _totalPoints total volume for the day
+    /// @param _points earned points for the day
+    /// @param _totalPoints total earned points for the day
     /// @param _sigTimestamp timestamp of the signature
     /// @param _reqId request id that the signature was obtained from
     /// @param _sign signature of the data
@@ -71,7 +76,7 @@ contract Rewarder is AccessControlUpgradeable {
     /// reverts if the signature is invalid
     function claim(
         uint256 _day,
-        uint256 _userPoints,
+        uint256 _points,
         uint256 _totalPoints,
         uint256 _sigTimestamp,
         bytes calldata _reqId,
@@ -80,13 +85,15 @@ contract Rewarder is AccessControlUpgradeable {
     ) external {
         if (_day >= _sigTimestamp / 1 days) revert DayNotFinished();
 
+        uint256 tokenId = IRFL(rfl).tokenInUse(msg.sender);
+
         IMuonClient(muonClient).verifyTSSAndGW(
             abi.encodePacked(
                 PROJECT_ID,
-                msg.sender,
+                tokenId,
                 address(0),
                 _day,
-                _userPoints,
+                _points,
                 _totalPoints,
                 _sigTimestamp
             ),
@@ -95,9 +102,9 @@ contract Rewarder is AccessControlUpgradeable {
             _gatewaySignature
         );
 
-        uint256 rewardAmount = (totalReward[_day] * _userPoints) / _totalPoints;
-        uint256 withdrawableAmount = rewardAmount - claimed[msg.sender][_day];
-        claimed[msg.sender][_day] += withdrawableAmount;
+        uint256 rewardAmount = (totalReward[_day] * _points) / _totalPoints;
+        uint256 withdrawableAmount = rewardAmount - claimed[tokenId][_day];
+        claimed[tokenId][_day] += withdrawableAmount;
 
         IERC20Upgradeable(rewardToken).safeTransfer(
             msg.sender,

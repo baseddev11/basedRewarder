@@ -9,12 +9,14 @@ import {
   Rewarder,
   IERC20__factory,
   IMuonClient__factory,
+  IRFL__factory,
 } from "../typechain-types";
 
 describe("testRewarder", () => {
   let rewarder: Rewarder;
   let rewardToken: MockContract;
   let muonClient: MockContract;
+  let referralNft: MockContract;
   let admin: SignerWithAddress;
   let user1: SignerWithAddress;
   let user2: SignerWithAddress;
@@ -25,9 +27,16 @@ describe("testRewarder", () => {
 
     rewardToken = await deployMockContract(admin, IERC20__factory.abi);
     muonClient = await deployMockContract(admin, IMuonClient__factory.abi);
+    referralNft = await deployMockContract(admin, IRFL__factory.abi);
+
     const startTimestamp = await getCurrentTimeStamp();
     const Factory = await ethers.getContractFactory("Rewarder");
-    const args = [rewardToken.address, admin.address, muonClient.address];
+    const args = [
+      rewardToken.address,
+      admin.address,
+      muonClient.address,
+      referralNft.address,
+    ];
     rewarder = (await upgrades.deployProxy(Factory, args)) as Rewarder;
 
     await muonClient.mock.verifyTSSAndGW.returns();
@@ -101,6 +110,7 @@ describe("testRewarder", () => {
     // claim
 
     await rewardToken.mock.transfer.withArgs(user2.address, 100).returns(true);
+    await referralNft.mock.tokenInUse.withArgs(user2.address).returns(1);
 
     await rewarder.connect(user2).claim(
       0,
@@ -116,8 +126,8 @@ describe("testRewarder", () => {
       [0, 0]
     );
 
-    const userClaimed = await rewarder.claimed(user2.address, 0);
-    expect(userClaimed).to.eq(100);
+    const claimed = await rewarder.claimed(1, 0);
+    expect(claimed).to.eq(100);
   });
 
   it("should not withdraw reward for day 0 twice", async () => {
@@ -138,6 +148,8 @@ describe("testRewarder", () => {
     // claim
 
     await rewardToken.mock.transfer.withArgs(user2.address, 100).returns(true);
+    await referralNft.mock.tokenInUse.withArgs(user2.address).returns(1);
+
     await rewarder.connect(user2).claim(
       0,
       10,
@@ -192,6 +204,7 @@ describe("testRewarder", () => {
     // claim
 
     await rewardToken.mock.transfer.withArgs(user2.address, 100).returns(true);
+    await referralNft.mock.tokenInUse.withArgs(user2.address).returns(1);
     await rewarder.connect(user2).claim(
       0,
       10,
@@ -212,6 +225,7 @@ describe("testRewarder", () => {
     });
 
     await rewardToken.mock.transfer.withArgs(user2.address, 200).returns(true);
+    await referralNft.mock.tokenInUse.withArgs(user2.address).returns(1);
     await rewarder.connect(user2).claim(
       1,
       20,
@@ -226,9 +240,9 @@ describe("testRewarder", () => {
       [0, 0]
     );
 
-    const userClaimed = await rewarder.claimed(user2.address, 0);
+    const userClaimed = await rewarder.claimed(1, 0);
     expect(userClaimed).to.eq(100);
-    const userClaimed2 = await rewarder.claimed(user2.address, 1);
+    const userClaimed2 = await rewarder.claimed(1, 1);
     expect(userClaimed2).to.eq(200);
   });
 
@@ -254,8 +268,9 @@ describe("testRewarder", () => {
 
     // claim
 
-    await rewardToken.mock.transfer.withArgs(user3.address, 100).returns(true);
-    await rewarder.connect(user3).claim(
+    await rewardToken.mock.transfer.withArgs(user2.address, 100).returns(true);
+    await referralNft.mock.tokenInUse.withArgs(user2.address).returns(1);
+    await rewarder.connect(user2).claim(
       0,
       10,
       100,
@@ -275,6 +290,7 @@ describe("testRewarder", () => {
     });
 
     await rewardToken.mock.transfer.withArgs(user3.address, 200).returns(true);
+    await referralNft.mock.tokenInUse.withArgs(user3.address).returns(2);
     await rewarder.connect(user3).claim(
       1,
       20,
@@ -289,9 +305,9 @@ describe("testRewarder", () => {
       [0, 0]
     );
 
-    const userClaimed = await rewarder.claimed(user3.address, 0);
+    const userClaimed = await rewarder.claimed(1, 0);
     expect(userClaimed).to.eq(100);
-    const userClaimed2 = await rewarder.claimed(user3.address, 1);
+    const userClaimed2 = await rewarder.claimed(2, 1);
     expect(userClaimed2).to.eq(200);
   });
 });
