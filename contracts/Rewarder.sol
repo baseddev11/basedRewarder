@@ -12,8 +12,6 @@ import "./interfaces/IRFL.sol";
 contract Rewarder is AccessControlUpgradeable {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    // Constants and state variables
-    bytes32 public PROJECT_ID; // DiBs Unique Project ID
     address public rewardToken; // Reward token
     address public muonClient; // Muon client contract
     address public rfl; // Referral NFT contract
@@ -44,10 +42,6 @@ contract Rewarder is AccessControlUpgradeable {
         muonClient = _muonClient;
         rewardToken = _rewardToken;
         rfl = _rfl;
-
-        PROJECT_ID = keccak256(
-            abi.encodePacked(uint256(block.chainid), address(this))
-        );
 
         _grantRole(DEFAULT_ADMIN_ROLE, _admin);
     }
@@ -89,9 +83,7 @@ contract Rewarder is AccessControlUpgradeable {
 
         IMuonClient(muonClient).verifyTSSAndGW(
             abi.encodePacked(
-                PROJECT_ID,
                 tokenId,
-                address(0),
                 _day,
                 _points,
                 _totalPoints,
