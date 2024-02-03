@@ -8,7 +8,10 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
+import "./interfaces/IRFL.sol";
+
 contract RFL is
+    IRFL,
     Initializable,
     ERC721Upgradeable,
     ERC721BurnableUpgradeable,
