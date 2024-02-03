@@ -18,7 +18,7 @@ contract RFL is
 
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
-    uint256 public activationCollateralThreshold; // collateral required to activate an NFT to be able to participate in the referral program
+    uint256 public activationThreshold; // collateral required to activate an NFT to be able to participate in the referral program
     address public collateral;
 
     // tokenId => locked collateral
@@ -70,7 +70,7 @@ contract RFL is
         _grantRole(MINTER_ROLE, _minter);
 
         collateral = _collateral;
-        activationCollateralThreshold = _activationCollateralThreshold;
+        activationThreshold = _activationCollateralThreshold;
     }
 
     // =========================== PUBLIC VIEWS ===========================
@@ -88,9 +88,7 @@ contract RFL is
     /// @param tokenId - token id
     /// @return true if active
     function isActiveReferrer(uint256 tokenId) public view returns (bool) {
-        return
-            lockedTokens[tokenId] >= activationCollateralThreshold ||
-            isOg[tokenId];
+        return lockedTokens[tokenId] >= activationThreshold || isOg[tokenId];
     }
 
     // =========================== PUBLIC MUTATIVE FUNCTIONS ===========================
