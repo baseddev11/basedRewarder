@@ -13,8 +13,7 @@ contract Rewarder is AccessControlUpgradeable {
     // Constants and state variables
     bytes32 public PROJECT_ID; // DiBs Unique Project ID
     address public rewardToken; // Reward token
-    uint256 public startTimestamp; // Start timestamp of the reward program
-    IMuonClient public muonClient; // Muon client contract
+    address public muonClient; // Muon client contract
 
     mapping(address => mapping(uint256 => uint256)) public claimed; // Mapping of user's claimed balance per day. claimed[user][day] = amount
     mapping(uint256 => uint256) public totalReward; // Mapping of total reward per day totalReward[day] = amount
@@ -36,12 +35,10 @@ contract Rewarder is AccessControlUpgradeable {
     function initialize(
         address _rewardToken,
         address _admin,
-        address _muonClient,
-        uint256 _startTimestamp
+        address _muonClient
     ) public initializer {
-        muonClient = IMuonClient(_muonClient);
+        muonClient = _muonClient;
         rewardToken = _rewardToken;
-        startTimestamp = _startTimestamp;
 
         PROJECT_ID = keccak256(
             abi.encodePacked(uint256(block.chainid), address(this))
@@ -81,10 +78,9 @@ contract Rewarder is AccessControlUpgradeable {
         IMuonClient.SchnorrSign calldata _sign,
         bytes calldata _gatewaySignature
     ) external {
-        if (_day >= (_sigTimestamp - startTimestamp) / 1 days)
-            revert DayNotFinished();
+        if (_day >= _sigTimestamp / 1 days) revert DayNotFinished();
 
-        muonClient.verifyTSSAndGW(
+        IMuonClient(muonClient).verifyTSSAndGW(
             abi.encodePacked(
                 PROJECT_ID,
                 msg.sender,
@@ -126,6 +122,6 @@ contract Rewarder is AccessControlUpgradeable {
         address _muonClient
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         emit SetMuonClient(_muonClient, address(muonClient));
-        muonClient = IMuonClient(_muonClient);
+        muonClient = _muonClient;
     }
 }

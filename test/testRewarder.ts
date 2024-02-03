@@ -27,12 +27,7 @@ describe("testRewarder", () => {
     muonClient = await deployMockContract(admin, IMuonClient__factory.abi);
     const startTimestamp = await getCurrentTimeStamp();
     const Factory = await ethers.getContractFactory("Rewarder");
-    const args = [
-      rewardToken.address,
-      admin.address,
-      muonClient.address,
-      startTimestamp,
-    ];
+    const args = [rewardToken.address, admin.address, muonClient.address];
     rewarder = (await upgrades.deployProxy(Factory, args)) as Rewarder;
 
     await muonClient.mock.verifyTSSAndGW.returns();
