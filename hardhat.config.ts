@@ -13,7 +13,6 @@ const config: HardhatUserConfig = {
     "base-mainnet": {
       url: "https://mainnet.base.org",
       accounts: [process.env.ADMIN_PRIVATE_KEY!],
-      gasPrice: 1000000000,
     },
     goerli: {
       url: "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
