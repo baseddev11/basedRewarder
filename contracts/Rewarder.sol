@@ -32,7 +32,7 @@ contract Rewarder is AccessControlUpgradeable {
     /// @notice Initialize the contract
     /// @param _rewardToken address of the reward token
     /// @param _admin address of the admin, can set reward token
-    /// @param _muonClient of the valid Muon gateway
+    /// @param _muonClient muon signature verifier
     function initialize(
         address _rewardToken,
         address _admin,
