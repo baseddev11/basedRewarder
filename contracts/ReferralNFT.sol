@@ -63,7 +63,7 @@ contract RFL is
         address _admin,
         address _minter,
         address _collateral,
-        uint256 _activationCollateralThreshold
+        uint256 _activationThreshold
     ) public initializer {
         __ERC721_init("RFL", "RFL");
         __ERC721Burnable_init();
@@ -73,7 +73,7 @@ contract RFL is
         _grantRole(MINTER_ROLE, _minter);
 
         collateral = _collateral;
-        activationThreshold = _activationCollateralThreshold;
+        activationThreshold = _activationThreshold;
     }
 
     // =========================== PUBLIC VIEWS ===========================
