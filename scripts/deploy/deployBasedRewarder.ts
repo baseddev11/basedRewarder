@@ -3,19 +3,14 @@ import hre, { ethers, upgrades } from "hardhat";
 
 async function deploy() {
   const [admin] = await ethers.getSigners();
-  const Factory = await ethers.getContractFactory("DibsRewarder");
-  const appId =
-    "29996138867610942848855832240712459333931278134263772663951800460922233661812";
-  const validGateway = "0x6914c3af649c285d706d6757dd899d84b606c2da";
+  const Factory = await ethers.getContractFactory("Rewarder");
 
-  const publicKey = [
-    "0x4d8bf64cdc8651641833910995bfe0aed9b61037721f3d2305d1f87e8f3ad815",
-    "0",
-  ];
+  const basedToken = "0x8Bd03dE024a0ED0bb71e4d23dD05039eB69E1dd0";
 
-  const basedToken = "0xBa5E6fa2f33f3955f0cef50c63dCC84861eAb663";
+  const zeroAddress = "0x0000000000000000000000000000000000000000";
+  const nft = "0xB898E8FD032ADa096F95754139208B3a271502fe";
 
-  const args = [basedToken, admin.address, validGateway, appId, publicKey];
+  const args = [basedToken, admin.address, admin.address, zeroAddress, nft];
 
   const rewarder = await upgrades.deployProxy(Factory, args);
   await rewarder.deployed();
@@ -34,7 +29,7 @@ async function deploy() {
       await hre.run("verify:verify", {
         address: rewarder.address,
         constructorArguments: [],
-        contract: "contracts/BasedRewarder.sol:DibsRewarder",
+        contract: "contracts/Rewarder.sol:Rewarder",
       });
     } catch (e) {
       console.log(e);

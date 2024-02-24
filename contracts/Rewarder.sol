@@ -12,18 +12,22 @@ import "./interfaces/IRFL.sol";
 contract Rewarder is AccessControlUpgradeable {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
+    bytes32 public constant SEEDER_ROLE = keccak256("SEEDER_ROLE");
+
     address public rewardToken; // Reward token
     address public muonClient; // Muon client contract
     address public rfl; // Referral NFT contract
 
     mapping(uint256 => mapping(uint256 => uint256)) public claimed; // Mapping of nft's claimed balance per day. claimed[nftId][day] = amount
     mapping(uint256 => uint256) public totalReward; // Mapping of total reward per day totalReward[day] = amount
+    mapping(uint256 => uint256) public seed; // Mapping of seed per day seed[day] = seed
 
     // Events
     event Reward(uint256 day, uint256 amount);
     event Claim(address indexed user, uint256 day, uint256 amount);
     event SetrewardToken(address indexed rewardToken);
     event SetMuonClient(address newAddress, address oldAddress);
+    event SetSeed(uint256 day, uint256 seed);
 
     // Errors
     error InvalidSignature();
@@ -32,10 +36,13 @@ contract Rewarder is AccessControlUpgradeable {
     /// @notice Initialize the contract
     /// @param _rewardToken address of the reward token
     /// @param _admin address of the admin, can set reward token
+    /// @param _seeder address of the seeder, can set seed
     /// @param _muonClient muon signature verifier
+    /// @param _rfl referral nft contract
     function initialize(
         address _rewardToken,
         address _admin,
+        address _seeder,
         address _muonClient,
         address _rfl
     ) public initializer {
@@ -44,6 +51,7 @@ contract Rewarder is AccessControlUpgradeable {
         rfl = _rfl;
 
         _grantRole(DEFAULT_ADMIN_ROLE, _admin);
+        _grantRole(SEEDER_ROLE, _seeder);
     }
 
     /// @notice Fill reward for a given day from the token contract
@@ -122,5 +130,18 @@ contract Rewarder is AccessControlUpgradeable {
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         emit SetMuonClient(_muonClient, address(muonClient));
         muonClient = _muonClient;
+    }
+
+    /// @notice set seed for a day
+    /// @param _day day to set seed for
+    /// @param _seed seed to set
+    function setSeed(
+        uint256 _day,
+        uint256 _seed
+    ) external onlyRole(SEEDER_ROLE) {
+        if (seed[_day] == 0) {
+            seed[_day] = _seed;
+            emit SetSeed(_day, _seed);
+        }
     }
 }
